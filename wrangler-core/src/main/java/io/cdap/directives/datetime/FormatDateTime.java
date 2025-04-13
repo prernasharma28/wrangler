@@ -74,33 +74,38 @@ public class FormatDateTime implements Directive, Lineage {
   }
 
   @Override
-  public List<Row> execute(List<Row> rows, ExecutorContext context) throws ErrorRowException {
-    for (Row row : rows) {
-      int idx = row.find(column);
-      if (idx == -1) {
-        continue;
-      }
-      Object value = row.getValue(idx);
-      // If the data in the cell is null, then skip this row.
-      if (value == null) {
-        continue;
-      }
-
-      if (!(value instanceof LocalDateTime)) {
-        throw new ErrorRowException(NAME, String.format("Value %s for column %s expected to be datetime but found %s",
-                                                        value.toString(), column, value.getClass().getSimpleName()), 2);
-      }
-
-      try {
-        LocalDateTime localDateTime = (LocalDateTime) value;
-        row.setValue(idx, localDateTime.format(formatter));
-      } catch (DateTimeException exception) {
-        throw new ErrorRowException(NAME, String.format("Error converting datetime %s to string with format %s",
-                                                        value.toString(), format), 2, exception);
-      }
+public List<Row> execute(List<Row> rows, ExecutorContext context) throws ErrorRowException {
+  for (Row row : rows) {
+    int idx = row.find(column);
+    if (idx == -1) {
+      continue;
     }
-    return rows;
+    Object value = row.getValue(idx);
+    if (value == null) {
+      continue;
+    }
+
+    if (!(value instanceof LocalDateTime)) {
+      throw new ErrorRowException(NAME, String.format("Value %s for column %s expected to be datetime but found %s",
+                                                      value.toString(), column, value.getClass().getSimpleName()), 2);
+    }
+
+    try {
+      LocalDateTime localDateTime = (LocalDateTime) value;
+      String formatted = localDateTime.format(formatter);
+      // Convert AM/PM to lowercase if present in format string
+      if (format.contains("a")) {
+        formatted = formatted.replaceAll("AM", "am").replaceAll("PM", "pm");
+      }
+      row.setValue(idx, formatted);
+    } catch (DateTimeException exception) {
+      throw new ErrorRowException(NAME, String.format("Error converting datetime %s to string with format %s",
+                                                      value.toString(), format), 2, exception);
+    }
   }
+  return rows;
+}
+
 
   @Override
   public void destroy() {
