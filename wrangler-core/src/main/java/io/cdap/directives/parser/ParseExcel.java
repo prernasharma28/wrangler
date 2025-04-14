@@ -262,7 +262,6 @@
 
 
 
-
 /*
  *  Copyright © 2017-2019 Cask Data, Inc.
  *
@@ -304,10 +303,10 @@ import io.cdap.wrangler.api.parser.Text;
 import io.cdap.wrangler.api.parser.TokenType;
 import io.cdap.wrangler.api.parser.UsageDefinition;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -424,13 +423,13 @@ public class ParseExcel implements Directive, Lineage {
                   }
                 }
                 String value = "";
-                switch (cell.getCellType()) {
+                switch (cell.getCellTypeEnum()) {
                   case STRING:
                     value = cell.getStringCellValue();
                     break;
 
                   case NUMERIC:
-                    if (DateUtil.isCellDateFormatted(cell)) {
+                    if (HSSFDateUtil.isCellDateFormatted(cell)) {
                       value = formatter.formatCellValue(cell);
                     } else {
                       value = String.valueOf(cell.getNumericCellValue());
@@ -503,7 +502,7 @@ public class ParseExcel implements Directive, Lineage {
     }
     for (int cellNum = row.getFirstCellNum(); cellNum < row.getLastCellNum(); cellNum++) {
       Cell cell = row.getCell(cellNum);
-      if (cell != null && cell.getCellType() != CellType.BLANK && StringUtils.isNotBlank(cell.toString())) {
+      if (cell != null && cell.getCellTypeEnum() != CellType.BLANK && StringUtils.isNotBlank(cell.toString())) {
         return false;
       }
     }

@@ -489,7 +489,6 @@
 
 
 
-
 /*
  * Copyright © 2020 Cask Data, Inc.
  *
@@ -515,11 +514,7 @@ import io.cdap.wrangler.utils.AvroSchemaGlossary;
 import org.apache.avro.Schema;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Arrays;
 import java.util.List;
@@ -527,8 +522,6 @@ import java.util.List;
 /**
  * Tests {@link DataModelMapColumn}
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(DataModelGlossary.class)
 public class DataModelMapColumnTest {
 
   private static final String SCHEMA = "{\n"
@@ -565,9 +558,6 @@ public class DataModelMapColumnTest {
     Mockito.when(mockGlossary.configure()).thenReturn(true);
     Mockito.when(mockGlossary.get(Mockito.anyString(), Mockito.anyLong())).thenReturn(null);
 
-    PowerMockito.mockStatic(DataModelGlossary.class);
-    PowerMockito.when(DataModelGlossary.initialize(Mockito.anyString())).thenReturn(true);
-    PowerMockito.when(DataModelGlossary.getGlossary()).thenReturn(mockGlossary);
     DataModelMapColumn.setGlossary("http://test-url.com", mockGlossary);
 
     String[] directives = new String[]{
@@ -592,9 +582,6 @@ public class DataModelMapColumnTest {
     Mockito.when(mockGlossary.configure()).thenReturn(true);
     Mockito.when(mockGlossary.get(Mockito.anyString(), Mockito.anyLong())).thenReturn(null);
 
-    PowerMockito.mockStatic(DataModelGlossary.class);
-    PowerMockito.when(DataModelGlossary.initialize(Mockito.anyString())).thenReturn(true);
-    PowerMockito.when(DataModelGlossary.getGlossary()).thenReturn(mockGlossary);
     DataModelMapColumn.setGlossary("http://test-url.com", mockGlossary);
 
     String[] directives = new String[]{
@@ -620,9 +607,6 @@ public class DataModelMapColumnTest {
     Mockito.when(mockGlossary.configure()).thenReturn(true);
     Mockito.when(mockGlossary.get(Mockito.anyString(), Mockito.anyLong())).thenReturn(parser.parse(SCHEMA));
 
-    PowerMockito.mockStatic(DataModelGlossary.class);
-    PowerMockito.when(DataModelGlossary.initialize(Mockito.anyString())).thenReturn(true);
-    PowerMockito.when(DataModelGlossary.getGlossary()).thenReturn(mockGlossary);
     DataModelMapColumn.setGlossary("http://test-url.com", mockGlossary);
 
     String[] directives = new String[]{
@@ -648,9 +632,6 @@ public class DataModelMapColumnTest {
     Mockito.when(mockGlossary.configure()).thenReturn(true);
     Mockito.when(mockGlossary.get(Mockito.anyString(), Mockito.anyLong())).thenReturn(parser.parse(SCHEMA));
 
-    PowerMockito.mockStatic(DataModelGlossary.class);
-    PowerMockito.when(DataModelGlossary.initialize(Mockito.anyString())).thenReturn(true);
-    PowerMockito.when(DataModelGlossary.getGlossary()).thenReturn(mockGlossary);
     DataModelMapColumn.setGlossary("http://test-url.com", mockGlossary);
 
     String[] directives = new String[]{
@@ -672,13 +653,10 @@ public class DataModelMapColumnTest {
   @Test(expected = RecipeException.class)
   public void testInitialize_targetFieldMissingType_directiveException() throws Exception {
     Schema.Parser parser = new Schema.Parser().setValidate(false);
-    AvroSchemaGlossary mockGlossary = Mockito.mock(AvroSchemaGlossary.class, Mockito.RETURNS_DEEP_STUBS);
+    AvroSchemaGlossary mockGlossary = Mockito.mock(AvroSchemaGlossary.class);
     Mockito.when(mockGlossary.configure()).thenReturn(true);
     Mockito.when(mockGlossary.get(Mockito.anyString(), Mockito.anyLong())).thenReturn(parser.parse(SCHEMA));
 
-    PowerMockito.mockStatic(DataModelGlossary.class);
-    PowerMockito.when(DataModelGlossary.initialize(Mockito.anyString())).thenReturn(true);
-    PowerMockito.when(DataModelGlossary.getGlossary()).thenReturn(mockGlossary);
     DataModelMapColumn.setGlossary("http://test-url.com", mockGlossary);
 
     String[] directives = new String[]{
@@ -700,13 +678,10 @@ public class DataModelMapColumnTest {
   @Test
   public void testExecute_row_successful() throws Exception {
     Schema.Parser parser = new Schema.Parser().setValidate(false);
-    AvroSchemaGlossary mockGlossary = Mockito.mock(AvroSchemaGlossary.class, Mockito.RETURNS_DEEP_STUBS);
+    AvroSchemaGlossary mockGlossary = Mockito.mock(AvroSchemaGlossary.class);
     Mockito.when(mockGlossary.configure()).thenReturn(true);
     Mockito.when(mockGlossary.get(Mockito.anyString(), Mockito.anyLong())).thenReturn(parser.parse(SCHEMA));
 
-    PowerMockito.mockStatic(DataModelGlossary.class);
-    PowerMockito.when(DataModelGlossary.initialize(Mockito.anyString())).thenReturn(true);
-    PowerMockito.when(DataModelGlossary.getGlossary()).thenReturn(mockGlossary);
     DataModelMapColumn.setGlossary("http://test-url.com", mockGlossary);
 
     String[] directives = new String[]{

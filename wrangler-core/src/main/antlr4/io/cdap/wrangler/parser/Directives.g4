@@ -51,23 +51,21 @@ statements
 
 directive
  : command
-   (   codeblock
-     | identifier
-     | macro
-     | text
-     | number
-     | bool
-     | column
-     | colList
-     | numberList
-     | boolList
-     | stringList
-     | numberRanges
-     | properties
-     | byteSizeArg       
-     | timeDurationArg  
-   )*?
- ;
+  (   codeblock
+    | identifier
+    | macro
+    | text
+    | number
+    | bool
+    | column
+    | colList
+    | numberList
+    | boolList
+    | stringList
+    | numberRanges
+    | properties
+  )*?
+  ;
 
 ifStatement
   : ifStat elseIfStat* elseStat? '}'
@@ -138,12 +136,13 @@ numberRanges
  ;
 
 numberRange
-: Number ':' Number '=' value
-; 
+ : Number ':' Number '=' value
+ ;
 
+// adding BYTE_SIZE and TIME_DURATION to value
 value
  : String | Number | Column | Bool | BYTE_SIZE | TIME_DURATION
- ;  
+ ;
 
 ecommand
  : '!' Identifier
@@ -197,19 +196,26 @@ identifierList
  : Identifier (',' Identifier)*
  ;
 
- /* NEW: Rules for byte size and time duration arguments */
-byteSizeArg
- : BYTE_SIZE
- ;
-
-timeDurationArg
- : TIME_DURATION
- ;
-
 
 /*
  * Following are the Lexer Rules used for tokenizing the recipe.
  */
+
+// fragments for the patterns
+
+fragment DIGIT: [0-9];
+fragment NUMBER: DIGIT+ ('.' DIGIT+)?; // for example, 10, 1.5
+fragment BYTE_UNIT: ('B' | 'KB' | 'MB' | 'GB' | 'TB');
+fragment TIME_UNIT: ('ns' | 'us' | 'ms' | 's' | 'm' | 'h' | 'd');
+
+byteSizeArg : BYTE_SIZE;
+timeDurationArg : TIME_DURATION;
+
+// Tokens
+
+BYTE_SIZE: NUMBER BYTE_UNIT;      // for example, 10KB, 1.5MB
+TIME_DURATION: NUMBER TIME_UNIT;  // for example, 5ms, 2.1s
+
 OBrace   : '{';
 CBrace   : '}';
 SColon   : ';';
@@ -322,23 +328,4 @@ fragment Int
 fragment Digit
  : [0-9]
  ;
-
-/* New lexer rules for byte size and time duration */
-
-fragment BYTE_UNIT
-    : 'B' | 'KB' | 'MB' | 'GB' | 'TB'
-    | 'b' | 'kb' | 'mb' | 'gb' | 'tb'
-    ;
-
-fragment TIME_UNIT
-    : 'ns' | 'ms' | 's' | 'm' | 'h' | 'd'
-    | 'NS' | 'MS' | 'S' | 'M' | 'H' | 'D'
-    ;
-
-BYTE_SIZE
-    : Number BYTE_UNIT
-    ;
-
-TIME_DURATION
-    : Number TIME_UNIT
-    ;
+ 
